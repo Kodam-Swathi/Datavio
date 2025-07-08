@@ -1,0 +1,1 @@
+SELECT page_content FROM api_listingdata WHERE unique_identifier={{skuDropdown.selectedOptionValue}};

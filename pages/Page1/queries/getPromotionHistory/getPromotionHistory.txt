@@ -1,0 +1,17 @@
+WITH promo_data AS (
+  SELECT 
+    (entry ->> 'date')::date AS date,
+    (entry ->> 'promotion_price')::numeric AS promotion_price
+  FROM api_listingdata d
+  CROSS JOIN LATERAL jsonb_array_elements(d.promotion_history) AS entry
+  WHERE d.unique_identifier = '{{ skuDropdown.selectedOptionValue }}'
+),
+latest_date AS (
+  SELECT MAX(date) AS max_date FROM promo_data
+)
+SELECT * 
+FROM promo_data
+WHERE 
+  EXTRACT(MONTH FROM date) = EXTRACT(MONTH FROM (SELECT max_date FROM latest_date))
+  AND EXTRACT(YEAR FROM date) = EXTRACT(YEAR FROM (SELECT max_date FROM latest_date))
+ORDER BY date;

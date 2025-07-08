@@ -1,0 +1,18 @@
+WITH revenue_data AS (
+  SELECT 
+    (entry ->> 'date')::date AS date,
+    (entry ->> 'avg_monthly_revenue')::numeric AS avg_monthly_revenue
+  FROM api_listinghistory h
+  JOIN api_listingdata d ON h.listing_id = d.id
+  CROSS JOIN LATERAL jsonb_array_elements(h.monthly_revenue_history) AS entry
+  WHERE d.unique_identifier = '{{ skuDropdown.selectedOptionValue }}'
+),
+latest_date AS (
+  SELECT MAX(date) AS max_date FROM revenue_data
+)
+SELECT * 
+FROM revenue_data
+WHERE 
+  EXTRACT(MONTH FROM date) = EXTRACT(MONTH FROM (SELECT max_date FROM latest_date))
+  AND EXTRACT(YEAR FROM date) = EXTRACT(YEAR FROM (SELECT max_date FROM latest_date))
+ORDER BY date;

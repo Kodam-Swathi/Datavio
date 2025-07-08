@@ -1,0 +1,4 @@
+SELECT unique_identifier
+FROM api_listingdata
+WHERE breadcrumb_category_id = {{ categoryDropdown.selectedOptionValue }}
+  AND brand_id = {{ brandDropdown.selectedOptionValue }};

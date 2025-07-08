@@ -1,0 +1,1 @@
+SELECT id, "categoryName" FROM api_flipkartbreadcrumbcategories;

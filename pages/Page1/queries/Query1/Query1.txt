@@ -1,0 +1,6 @@
+SELECT 
+  entry ->> 'date' AS date,
+  (entry ->> 'promotion_price')::numeric AS promotion_price
+FROM api_listingdata
+CROSS JOIN LATERAL jsonb_array_elements(promotion_history) AS entry
+WHERE unique_identifier = '{{ skuDropdown.selectedOptionValue }}';
